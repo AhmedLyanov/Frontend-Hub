@@ -5,6 +5,7 @@ import upload from "../config/multer.js";
 const authRouter = Router();
 
 authRouter.post('/registration', upload.single('avatar'), authController.registration);
+authRouter.post('/login', authController.login);
 
 // getUsersRole
 authRouter.get('/role/admin', authController.getUsersRolesAdmin);
