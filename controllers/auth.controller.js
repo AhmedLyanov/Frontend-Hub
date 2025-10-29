@@ -131,6 +131,19 @@ class AuthController {
         .json({ message: "Ошибка получения пользователей с ролью student" });
     }
   }
+
+  async getUserProfile(req, res, token){
+    try {
+      const usersProfile = await User.find({ roles: "student" });
+      return res.status(200).json({
+        students: usersProfile,
+      });
+    } catch (error) {
+      return res
+      .status(500)
+      .json("Не получилось получить");
+    }
+  }
 }
 
 export default new AuthController();
