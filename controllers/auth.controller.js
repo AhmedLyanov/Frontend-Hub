@@ -78,7 +78,7 @@ class AuthController {
 
       const validPassword = bcrypt.compareSync(password, user.password)
       if (!validPassword) {
-        return res.status(400).json({ message: "Непарвильный пароль" });
+        return res.status(400).json({ message: "Неправильный пароль" });
       }
 
       const token = generateToken(user);
@@ -138,7 +138,7 @@ class AuthController {
 
       const usersProfile = await User.findById(id);
       if (!usersProfile) {
-        return res.status(404).json({message: "Пользавотель ни найтесься"})
+        return res.status(404).json({message: "Пользователь не найден"})
       }
       return res.status(200).json({
         students: usersProfile,
@@ -146,7 +146,7 @@ class AuthController {
     } catch (error) {
       return res
       .status(500)
-      .json("Не получилось получить");
+      .json("Не удалось найти");
     }
   }
 }
