@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import dotenv from "dotenv";
-import transporter from "../config/mailer.js";
+// import transporter from "../config/mailer.js";
 
 dotenv.config();
 
@@ -46,13 +46,13 @@ class AuthController {
       const token = generateToken(user);
       await user.save();
 
-      await transporter.sendMail({
-        from: 'Workout <amoshal1997@gmail.com>',
-        to: email,
-        subject: "Добро пожаловать!",
-        text: "тестовое сообщение приветсвия",
-        html: `<p>Вы зарегистрировались в workout</p>`
-      })
+      // await transporter.sendMail({
+      //   from: 'Workout <amoshal1997@gmail.com>',
+      //   to: email,
+      //   subject: "Добро пожаловать!",
+      //   text: "тестовое сообщение приветсвия",
+      //   html: `<p>Вы зарегистрировались в workout</p>`
+      // })
       return res.status(201).json({ message: user, token });
     } catch (error) {
       console.error("Registration error:", error);
@@ -132,9 +132,14 @@ class AuthController {
     }
   }
 
-  async getUserProfile(req, res, token){
+  async getUserProfile(req, res){
     try {
-      const usersProfile = await User.find({ roles: "student" });
+      const {id} = req.user
+
+      const usersProfile = await User.findById(id);
+      if (!usersProfile) {
+        return res.status(404).json({message: "Пользавотель ни найтесься"})
+      }
       return res.status(200).json({
         students: usersProfile,
       });

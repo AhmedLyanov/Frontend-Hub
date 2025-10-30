@@ -10,6 +10,8 @@ const UserSchema = new Schema(
     phoneNumber: { type: Number, unique: true },
     avatar: { type: String },
     roles: { type: [String], default: ["student"] }, //admin or user
+    project: {type: [String], default: []},
+    resume: {true: [String], default: []}
   },
   { timestamps: true }
 );
