@@ -11,7 +11,10 @@ const UserSchema = new Schema(
     avatar: { type: String },
     roles: { type: [String], default: ["student"] }, //admin or user
     project: {type: [String], default: []},
-    resume: {true: [String], default: []}
+    resume: {true: [String], default: []},
+    verified: {type:Boolean, default: false},
+    emailVerificationCode: {type: String, default: null},
+    emailVerificationCodeExpires: {type: Date, default: null}
   },
   { timestamps: true }
 );
