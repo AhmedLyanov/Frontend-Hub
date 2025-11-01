@@ -9,16 +9,22 @@ import {
 
 const authRouter = Router();
 
+
 authRouter.post(
   "/registration",
   upload.single("avatar"),
   validateRegistration,
   authController.registration
 );
+
+authRouter.post('/send-verify', authController.sendVerificationEmail)
+authRouter.post('/verify-email', authController.verifyEmail)
+authRouter.post('/resend-verify', authController.resendVerificationCode)
 authRouter.post("/login", validateLogin, authController.login);
 
-authRouter.get("/role/admin", authController.getUsersRolesAdmin);
-authRouter.get("/role/user", authController.getUsersRolesUser);
-authRouter.get("/role/student", authController.getUsersRolesStudent);
+
+authRouter.get("/role/admin", authMiddleware, authController.getUsersRolesAdmin);
+authRouter.get("/role/user", authMiddleware, authController.getUsersRolesUser);
+authRouter.get("/role/student", authMiddleware, authController.getUsersRolesStudent);
 
 export default authRouter;
