@@ -21,6 +21,8 @@ authRouter.post('/send-verify', authController.sendVerificationEmail)
 authRouter.post('/verify-email', authController.verifyEmail)
 authRouter.post('/resend-verify', authController.resendVerificationCode)
 authRouter.post("/login", validateLogin, authController.login);
+authRouter.post("/forgot-password", authController.forgotPassword);
+authRouter.post("/reset-password", authController.resetPassword);
 
 
 authRouter.get("/role/admin", authMiddleware, authController.getUsersRolesAdmin);

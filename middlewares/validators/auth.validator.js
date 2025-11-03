@@ -72,16 +72,21 @@ export const validateRegistration = [
 
 export const validateLogin = [
   body('email')
+    .trim()
+    .notEmpty()
+    .withMessage('Почта обязательна')
+    .isLength({ min: 6, max: 100 })
+    .withMessage('В почте должно быть от 6 до 100 символов')
     .isEmail()
-    .normalizeEmail()
-    .withMessage('Введите корректный email адрес'),
+    .withMessage('Введите корректный email адрес')
+    .normalizeEmail(),
 
   body('password')
     .notEmpty()
     .withMessage('Пароль обязателен'),
 
   handleValidationErrors
-];
+]
 
 
 
