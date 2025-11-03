@@ -14,7 +14,9 @@ const UserSchema = new Schema(
     resume: {true: [String], default: []},
     verified: {type:Boolean, default: false},
     emailVerificationCode: {type: String, default: null},
-    emailVerificationCodeExpires: {type: Date, default: null}
+    emailVerificationCodeExpires: {type: Date, default: null},
+    passwordResetCode: { type: String, default: null },
+    passwordResetCodeExpires: { type: Date, default: null },
   },
   { timestamps: true }
 );
