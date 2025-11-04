@@ -2,12 +2,11 @@ import User from "../models/User.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import fs from "fs";
-import dotenv from "dotenv";
 import transporter from "../config/mailer.js";
 
-dotenv.config();
-
 function generateToken(user) {
+  console.log(process.env.JWT_SECRET);
+  
   return jwt.sign(
     { userId: user._id, email: user.email },
     process.env.JWT_SECRET,

@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth.route.js";
+import resumeRouter from "./routes/resume.route.js";
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -9,12 +10,13 @@ dotenv.config();
 
 app.use(express.json());
 app.use("/auth", authRouter);
+app.use("/resume", resumeRouter);
 app.use('/uploads', express.static('uploads'));
 app.use(cors({
     origin: "*"
 }));
 
-const PORT = process.env.PORT || 5000;
+const PORT = 3000;
 
 app.get('/', (req, res) => {
     res.status(200).json({message:"worked"});

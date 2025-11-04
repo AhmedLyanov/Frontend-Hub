@@ -22,7 +22,7 @@ const LanguageSchema = new Schema({
 const ResumeSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, required: true },
     title: { type: String, required: true },
-    summary: { type: String, required: true },
+    description: { type: String, required: true },
     contacts: {
       email: { type: String, required: true },
       phone: { type: String },
