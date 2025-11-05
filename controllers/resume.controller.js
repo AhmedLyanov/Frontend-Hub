@@ -32,7 +32,7 @@ export async function createResume(req, res){
         const { id } = req.user;
         const{
             title,
-            summary,
+            description,
             contacts,
             workExperience,
             education,
@@ -43,7 +43,7 @@ export async function createResume(req, res){
         await Resume.create({
             userId: id,
             title,
-            summary,
+            description,
             contacts,
             workExperience,
             education,
@@ -62,15 +62,7 @@ export async function updateResume(req, res){
     try {
         const { id } = req.user;
         const { resumeId } = req.params;
-        const{
-            title,
-            summary,
-            contacts,
-            workExperience,
-            education,
-            skills,
-            languages
-        } = req.body;
+        const data = req.body;
 
         const resume = await Resume.findById(resumeId);
 
@@ -78,21 +70,19 @@ export async function updateResume(req, res){
             return res.status(404).json({ message: "Резюме не найдено" });
         }
 
-        if(id !== resume.userId){
+        if(id !== resume.userId.toString()){
+            console.log(id, resume.userId);
+            
             return res.status(403).json({ message: "У вас нет доступа" });
         }
 
-        resume.title = title;
-        resume.summary = summary;
-        resume.contacts = contacts;
-        resume.workExperience = workExperience;
-        resume.education = education;
-        resume.skills = skills;
-        resume.languages = languages;
+        await Resume.findByIdAndUpdate(
+            resumeId,
+            { $set: data },
+            { new: true, runValidators: true }
+        );
 
-        await resume.save();
-
-        res.status(200).json({ message: "Резюме успешно добавлено" });
+        res.status(200).json({ message: "Резюме успешно обновлено" });
     } catch (error) {
         res.status(500).json({ message: "Не удалось обновить резюме" });
         console.error(error);
@@ -109,7 +99,7 @@ export async function deleteResume(req, res){
             return res.status(404).json({ message: "Резюме не найдено" });
         }
 
-        if(id !== resume.userId){
+        if(id !== resume.userId.toString()){
             return res.status(403).json({ message: "У вас нет доступа" });
         }
 
