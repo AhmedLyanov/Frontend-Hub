@@ -9,7 +9,6 @@ import {
 
 const authRouter = Router();
 
-
 authRouter.post(
   "/registration",
   upload.single("avatar"),
@@ -17,14 +16,25 @@ authRouter.post(
   authController.registration
 );
 
-authRouter.post('/send-verify', authController.sendVerificationEmail)
-authRouter.post('/verify-email', authController.verifyEmail)
-authRouter.post('/resend-verify', authController.resendVerificationCode)
+authRouter.post("/send-verify", authController.sendVerificationEmail);
+authRouter.post("/verify-email", authController.verifyEmail);
+authRouter.post("/resend-verify", authController.resendVerificationCode);
 authRouter.post("/login", validateLogin, authController.login);
 
 
-authRouter.get("/role/admin", authMiddleware, authController.getUsersRolesAdmin);
+authRouter.put("/change-password", authMiddleware, authController.changePassword);
+authRouter.put("/change-email", authMiddleware, authController.changeEmail);
+authRouter.get("/profile", authMiddleware, authController.getUserProfile);
+authRouter.get(
+  "/role/admin",
+  authMiddleware,
+  authController.getUsersRolesAdmin
+);
 authRouter.get("/role/user", authMiddleware, authController.getUsersRolesUser);
-authRouter.get("/role/student", authMiddleware, authController.getUsersRolesStudent);
+authRouter.get(
+  "/role/student",
+  authMiddleware,
+  authController.getUsersRolesStudent
+);
 
 export default authRouter;

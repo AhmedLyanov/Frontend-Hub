@@ -56,7 +56,6 @@ class AuthController {
       const user = new User(newUser);
       await user.save();
 
-      
       await transporter.sendMail({
         from: "Frontend-Hub <amoshal1997@gmail.com>",
         to: email,
@@ -106,7 +105,6 @@ class AuthController {
         return res.status(400).json({ message: "Email уже подтвержден" });
       }
 
-      
       const verificationCode = crypto.randomInt(100000, 999999).toString();
       const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -115,7 +113,6 @@ class AuthController {
 
       await user.save();
 
-      
       await transporter.sendMail({
         from: "Frontend-Hub <amoshal1997@gmail.com>",
         to: email,
@@ -136,9 +133,10 @@ class AuthController {
         message: "Код подтверждения отправлен на вашу почту",
       });
     } catch (error) {
-      
       console.error("Send verification email error:", error);
-      return res.status(500).json({ message: "Ошибка отправки кода подтверждения" });
+      return res
+        .status(500)
+        .json({ message: "Ошибка отправки кода подтверждения" });
     }
   }
 
@@ -155,7 +153,6 @@ class AuthController {
         return res.status(400).json({ message: "Email уже подтвержден" });
       }
 
-      
       if (!user.emailVerificationCode || !user.emailVerificationCodeExpires) {
         return res.status(400).json({ message: "Код не найден или устарел" });
       }
@@ -168,13 +165,11 @@ class AuthController {
         return res.status(400).json({ message: "Срок действия кода истек" });
       }
 
-      
       user.isEmailVerified = true;
       user.emailVerificationCode = undefined;
       user.emailVerificationCodeExpires = undefined;
       await user.save();
 
-      
       const token = generateToken(user);
 
       return res.status(200).json({
@@ -207,7 +202,6 @@ class AuthController {
         return res.status(400).json({ message: "Email уже подтвержден" });
       }
 
-      
       if (
         user.emailVerificationCodeExpires &&
         new Date(user.emailVerificationCodeExpires.getTime() + 60000) >
@@ -218,7 +212,6 @@ class AuthController {
         });
       }
 
-      
       const verificationCode = crypto.randomInt(100000, 999999).toString();
       const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -226,7 +219,6 @@ class AuthController {
       user.emailVerificationCodeExpires = verificationCodeExpires;
       await user.save();
 
-      
       await transporter.sendMail({
         from: "Frontend-Hub <amoshal1997@gmail.com>",
         to: email,
@@ -255,7 +247,6 @@ class AuthController {
     try {
       const { email, password } = req.body;
 
-      
       if (!email || !password) {
         return res.status(400).json({ message: "Не все поля заполнены" });
       }
@@ -283,8 +274,8 @@ class AuthController {
     try {
       const { email } = req.body;
 
-      if(!email) {
-        return res.status(400).json({ message: "Поле email обязательно" })
+      if (!email) {
+        return res.status(400).json({ message: "Поле email обязательно" });
       }
 
       const user = await User.findOne({ email });
@@ -323,29 +314,40 @@ class AuthController {
       });
     } catch (error) {
       console.error("Forgot password error:", error);
-      return res.status(500).json({ message: "Ошибка при запросе восстановления пароля" })
+      return res
+        .status(500)
+        .json({ message: "Ошибка при запросе восстановления пароля" });
     }
   }
 
   async resetPassword(req, res) {
     try {
       const { email, resetCode, newPassword } = req.body;
-      const missingFields = []
+      const missingFields = [];
 
-      if (!email) missingFields.push('email')
-      if (!resetCode) missingFields.push('resetCode') 
-      if (!newPassword) missingFields.push('newPassword')
+      if (!email) missingFields.push("email");
+      if (!resetCode) missingFields.push("resetCode");
+      if (!newPassword) missingFields.push("newPassword");
 
       if (missingFields.length > 0) {
-        return res.status(400).json({ message: `Не заполнены обязательные поля: ${missingFields.join(', ')}` })
+        return res.status(400).json({
+          message: `Не заполнены обязательные поля: ${missingFields.join(
+            ", "
+          )}`,
+        });
       }
 
       if (newPassword.length < 6) {
-        return res.status(400).json({ message: "Пароль должен быть не менее 6 символов" });
+        return res
+          .status(400)
+          .json({ message: "Пароль должен быть не менее 6 символов" });
       }
 
       if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
-        return res.status(400).json({ message: "Пароль должен содержать хотя бы одну заглавную букву, одну строчную и одну цифру" });
+        return res.status(400).json({
+          message:
+            "Пароль должен содержать хотя бы одну заглавную букву, одну строчную и одну цифру",
+        });
       }
 
       const user = await User.findOne({ email });
@@ -358,16 +360,20 @@ class AuthController {
       }
 
       if (user.passwordResetCode !== resetCode) {
-        return res.status(400).json({ message: "Неверный код подтверждения сброса пароля" });
+        return res
+          .status(400)
+          .json({ message: "Неверный код подтверждения сброса пароля" });
       }
 
       if (new Date() > user.passwordResetCodeExpires) {
-        return res.status(400).json({ message: "Срок действия кода для сброса пароля истек" });
+        return res
+          .status(400)
+          .json({ message: "Срок действия кода для сброса пароля истек" });
       }
 
-      const hashedPassword = await bcrypt.hash(newPassword, 10)
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      user.password = hashedPassword
+      user.password = hashedPassword;
       user.passwordResetCode = null;
       user.passwordResetCodeExpires = null;
       await user.save();
@@ -387,7 +393,9 @@ class AuthController {
       });
     } catch (error) {
       console.error("Reset password error:", error);
-      return res.status(500).json({ message: "Ошибка при попытке сброса пароля" })
+      return res
+        .status(500)
+        .json({ message: "Ошибка при попытке сброса пароля" });
     }
   }
 
@@ -446,6 +454,95 @@ class AuthController {
       });
     } catch (error) {
       return res.status(500).json("Не удалось найти");
+    }
+  }
+
+  async changeEmail(req, res) {
+    try {
+      const { id } = req.user;
+      const { newEmail, password } = req.body;
+
+      if (!newEmail || !password) {
+        return res.status(400).json({
+          message: "Все поля обязательны",
+        });
+      }
+
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      
+      const validPassword = bcrypt.compareSync(password, user.password);
+      if (!validPassword) {
+        return res.status(400).json({ message: "Пароль неверен" });
+      }
+
+      
+      const existingUser = await User.findOne({ email: newEmail });
+      if (existingUser) {
+        return res.status(400).json({
+          message: "Этот email уже используется",
+        });
+      }
+
+      
+      user.email = newEmail;
+      user.isEmailVerified = false; 
+      await user.save();
+
+      
+      const token = generateToken(user);
+
+      return res.status(200).json({
+        message: "Email успешно изменен",
+        token,
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isEmailVerified: user.isEmailVerified,
+        },
+      });
+    } catch (error) {
+      console.error("Change email error:", error);
+      return res.status(500).json({ message: "Ошибка при изменении email" });
+    }
+  }
+
+  async changePassword(req, res) {
+    try {
+      const { id } = req.user;
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          message: "Все поля обязательны",
+        });
+      }
+
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      const validPassword = bcrypt.compareSync(currentPassword, user.password);
+      if (!validPassword) {
+        return res.status(400).json({ message: "Текущий пароль неверен" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+      await user.save();
+
+      return res.status(200).json({
+        message: "Пароль успешно изменен",
+      });
+    } catch (error) {
+      console.error("Change password error:", error);
+      return res.status(500).json({ message: "Ошибка при изменении пароля" });
     }
   }
 }
