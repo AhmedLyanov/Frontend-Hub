@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth.route.js";
+import projectRouter from './routes/projectRoute.js'
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -9,6 +10,7 @@ dotenv.config();
 
 app.use(express.json());
 app.use("/auth", authRouter);
+app.use('/project' , projectRouter);
 app.use('/uploads', express.static('uploads'));
 app.use(cors({
     origin: "*"
