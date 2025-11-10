@@ -5,16 +5,16 @@ import projectRouter from './routes/projectRoute.js'
 import cors from "cors";
 import dotenv from "dotenv";
 
+
 const app = express();
 dotenv.config();
-
+app.use(cors({
+    origin: "*"
+}));
 app.use(express.json());
 app.use("/auth", authRouter);
 app.use('/project' , projectRouter);
 app.use('/uploads', express.static('uploads'));
-app.use(cors({
-    origin: "*"
-}));
 
 const PORT = process.env.PORT || 5000;
 

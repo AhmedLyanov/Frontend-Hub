@@ -1,12 +1,17 @@
 import Project from "../models/Project.js";
 import fs from "fs-extra";
 import path from "path";
+import { fileURLToPath } from 'url';
+import User from '../models/User.model.js'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class ProjectController {
   async addProject(req, res) {
     try {
-      const { title, description, rating, userId } = req.body;
-
+      const { title, description, rating } = req.body;
+      const userId = req.user.id;
       let images = [];
       if (req.files && req.files.length > 0) {
         images = req.files.map((file) => file.path);
@@ -22,6 +27,17 @@ class ProjectController {
         images: images,
       });
 
+      if (!userId) {
+        return res
+          .status(400)
+          .json({ message: "Идентификатор автора отсутствует" });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(400).json({ message: "Пользователь не найден" });
+      }
+
       await project.save();
       return res.status(200).json("Проект успешно добавлен!");
     } catch (e) {
@@ -33,14 +49,23 @@ class ProjectController {
   async deleteOneProject(req, res) {
     try {
       const id = req.params.id;
+      const userId = req.user.id;
       const project = await Project.findById(id);
 
       if (!project) {
         return res.status(404).json({ message: "Проект не найден" });
       }
 
+      if (project.userId !== userId) {
+        return res.status(403).json({ message: "Вы не автор этого проекта" });
+      }
+
       if (project.images && project.images.length > 0) {
         for (const imagePath of project.images) {
+          if (imagePath === "uploads/not_img.jpg") {
+            continue;
+          }
+
           try {
             const fullPath = path.join(__dirname, "..", imagePath);
             if (await fs.pathExists(fullPath)) {
@@ -55,7 +80,7 @@ class ProjectController {
 
       const deletedProject = await Project.findByIdAndDelete(id);
 
-      res.json({
+      res.status(200).json({
         message: "Проект удалён",
         project: deletedProject,
       });
@@ -78,7 +103,12 @@ class ProjectController {
   async getOneProject(req, res) {
     try {
       const id = req.params.id;
-      const project = await Project.findById({ _id: id });
+      const project = await Project.findById(id);
+
+      if (!project) {
+        return res.status(404).json({ message: "Проект не найден" });
+      }
+
       res.json(project);
     } catch (e) {
       console.log(e);
@@ -89,38 +119,48 @@ class ProjectController {
   async updateProject(req, res) {
     try {
       const id = req.params.id;
+      const userId = req.user.id;
       const { title, description } = req.body;
-      const project = await Project.findByIdAndUpdate(
-        { _id: id },
-        { title: title, description: description }
-      );
 
-      res.status(200).json({ message: "Проект изменен" });
+      const project = await Project.findById(id);
+
+      if (!project) {
+        return res.status(404).json({ message: "Проект не найден" });
+      }
+
+      if (project.userId !== userId) {
+        return res.status(403).json({ message: "Вы не автор этого проекта" });
+      }
+
+      res.status(200).json({
+        message: "Проект изменен",
+        project
+      });
     } catch (e) {
       res.status(500).json({ message: "Ошибка при изменении проекта" });
     }
   }
 
-//    async getUserProjects(req, res) {
-//     try {
-//       const userId = req.user.id;
-//       const projects = await Project.find({ userId: userId }).sort({ createdAt: -1 });
-//       res.json(posts);
-//     } catch (e) {
-//       console.error(e);
-//       res
-//         .status(500)
-//         .json({ message: "Ошибка при получении объявлений пользователя" });
-//     }
-//   }
+  //    async getUserProjects(req, res) {
+  //     try {
+  //       const userId = req.user.id;
+  //       const projects = await Project.find({ userId: userId }).sort({ createdAt: -1 });
+  //       res.json(posts);
+  //     } catch (e) {
+  //       console.error(e);
+  //       res
+  //         .status(500)
+  //         .json({ message: "Ошибка при получении объявлений пользователя" });
+  //     }
+  //   }
 
-// Функция выше должен работать если есть jwt авторизация, у меня этого нет поэтому id добовлял в ручную. И для проверки Функция ниже
+  // Функция выше должен работать если есть jwt авторизация, у меня этого нет поэтому id добовлял в ручную. И для проверки Функция ниже
 
   async getUserProjects(req, res) {
     try {
-      const userId = req.params.userId;
+      const userId = req.user.id;
       const projects = await Project.find({ userId: userId });
-      
+
       res.json(projects);
     } catch (e) {
       console.log(e);

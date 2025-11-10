@@ -2,7 +2,7 @@ import { Router } from "express";
 const router = new Router();
 import projectController from "../controllers/projectController.js";
 // import authMiddleware from "../middlewares/authMiddleware.js";
-import upload from '../middlewares/upload.js';
+import upload from '../middlewares/project-upload.js';
 
 router.get("/allProjects", projectController.getProjects);
 router.get("/getProject/:id", projectController.getOneProject);
