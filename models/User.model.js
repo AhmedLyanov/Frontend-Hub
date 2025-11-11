@@ -7,6 +7,7 @@ const UserSchema = new Schema(
     patronymic: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
+    age: {type: Number, required: true},
     phoneNumber: { type: Number, unique: true },
     avatar: { type: String },
     roles: { type: [String], default: ["student"] }, //admin or user

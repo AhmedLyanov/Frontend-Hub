@@ -19,7 +19,7 @@ function generateToken(user) {
 class AuthController {
   async registration(req, res) {
     try {
-      const { firstName, lastName, patronymic, email, password, phoneNumber } =
+      const { firstName, lastName, patronymic, email, age, password, phoneNumber } =
         req.body;
       const candidate = await User.findOne({ email });
       if (candidate) {
@@ -34,6 +34,7 @@ class AuthController {
         lastName,
         patronymic,
         email,
+        age,
         password: hashedPassword,
         phoneNumber,
       };

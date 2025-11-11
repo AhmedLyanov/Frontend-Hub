@@ -20,7 +20,7 @@ const LanguageSchema = new Schema({
 }, { _id: false });
 
 const ResumeSchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, required: true },
+    user: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     title: { type: String, required: true },
     description: { type: String, required: true },
     contacts: {

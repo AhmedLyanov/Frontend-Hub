@@ -14,7 +14,8 @@ export async function getResumes(req, res){
 export async function getResume(req, res){
     try {
         const { resumeId } = req.params;
-        const resume = await Resume.findById(resumeId);
+        const resume = await Resume.findById(resumeId)
+            .populate("user", "avatar firstName lastName age");
 
         if(!resume){
             return res.status(404).json({ message: "Резюме не найдено" });
@@ -41,7 +42,7 @@ export async function createResume(req, res){
         } = req.body;
 
         await Resume.create({
-            userId: id,
+            user: id,
             title,
             description,
             contacts,
@@ -70,16 +71,15 @@ export async function updateResume(req, res){
             return res.status(404).json({ message: "Резюме не найдено" });
         }
 
-        if(id !== resume.userId.toString()){
-            console.log(id, resume.userId);
+        if(id !== resume.user.toString()){
+            console.log(id, resume.user);
             
             return res.status(403).json({ message: "У вас нет доступа" });
         }
 
         await Resume.findByIdAndUpdate(
             resumeId,
-            { $set: data },
-            { new: true, runValidators: true }
+            { $set: data }
         );
 
         res.status(200).json({ message: "Резюме успешно обновлено" });
@@ -99,7 +99,7 @@ export async function deleteResume(req, res){
             return res.status(404).json({ message: "Резюме не найдено" });
         }
 
-        if(id !== resume.userId.toString()){
+        if(id !== resume.user.toString()){
             return res.status(403).json({ message: "У вас нет доступа" });
         }
 
