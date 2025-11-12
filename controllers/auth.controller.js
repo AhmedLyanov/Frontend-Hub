@@ -561,12 +561,33 @@ class AuthController {
       if (!usersProfile) {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
-      return res.status(200).json({
-        students: usersProfile,
-      });
+      return res.status(200).json(
+        usersProfile
+      );
     } catch (error) {
+      console.error(error)
       return res.status(500).json("Не удалось найти");
     }
+  }
+
+  async editProfile(req, res){
+    try {
+      const {id} = req.user;
+      const {userData} = req.body
+      const user = await User.findById(id)
+      if (!user) {
+        return res.status(400).json({ message: "Нет пользователя" }) 
+      }
+      console.log(userData, "dwadwadwadwadwwddwaaddwad");
+      
+      await User.findByIdAndUpdate(id, userData)
+
+      return res.status(200).json({message: "Успешно"})
+
+    } catch (error) {
+      console.log("Ошибка при изменении профиля", error);
+      res.status(500).json({message:"Ошибка при изменении профиля"})
+    } 
   }
 
   async changeEmail(req, res) {
