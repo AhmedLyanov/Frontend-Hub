@@ -28,6 +28,18 @@ authRouter.put("/change-password", authMiddleware, authController.changePassword
 authRouter.put("/change-email", authMiddleware, authController.changeEmail);
 authRouter.get("/profile", authMiddleware, authController.getUserProfile);
 authRouter.put("/profile", authMiddleware, authController.editProfile)
+authRouter.post(
+  "/upload-avatar",
+  authMiddleware,
+  upload.single("avatar"),
+  authController.uploadAvatar
+);
+
+authRouter.delete(
+  "/delete-avatar",
+  authMiddleware,
+  authController.deleteAvatar
+);
 authRouter.get(
   "/role/admin",
   authMiddleware,

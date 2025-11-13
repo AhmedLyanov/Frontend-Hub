@@ -17,6 +17,21 @@ const UserSchema = new Schema(
     emailVerificationCodeExpires: {type: Date, default: null},
     passwordResetCode: { type: String, default: null },
     passwordResetCodeExpires: { type: Date, default: null },
+
+    age: { type: Number, default: null },
+    city: { type: String, default: '' },
+    about: { type: String, default: '' },
+    status: { type: String, default: '' },
+    educationLevel: { type: String, default: '' },
+    educationalInstitution: { type: String, default: '' },
+    faculty: { type: String, default: '' },
+    yearOfGraduation: { type: String, default: '' },
+    skills: { type: String, default: '' },
+    achievements: { type: String, default: '' },
+    linkProject: { type: String, default: '' },
+    description: { type: String, default: '' },
+    social: { type: String, default: '' },
+    linkSocial: { type: String, default: '' },
   },
   { timestamps: true }
 );
