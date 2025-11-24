@@ -5,7 +5,7 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 
 const authRouter = Router();
 
-authRouter.post('/registration', upload.single('avatar'), authController.registration);
+authRouter.post('/registration',authMiddleware, upload.single('avatar'), authController.registration);
 authRouter.post('/login', authController.login);
 
 // getUsersRole
